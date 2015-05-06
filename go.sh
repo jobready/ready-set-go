@@ -1,8 +1,13 @@
-#!/bin/bash -e
-set -euo pipefail
+#!/bin/bash
+set -eo pipefail
 IFS=$'\n\t'
 
 project=$(basename $PWD)
+
+if ! [[-f Gemfile]]; then
+  "Need to be in project root directory"
+  exit
+fi
 
 echo "Warning! This script will delete any existing databases configured for"
 echo "$project development and test. If you need any data in those"
@@ -20,8 +25,14 @@ fi
 echo "Ruby version is $version"
 
 if [[ $option == 'y' ]]; then
-  echo "Setting up Project Neptune"
+  echo "Setting up $project"
   echo "-----------------------------------------------------------------------"
+
+  if ! [[ -n "$JAVA_HOME" ]]; then
+    echo $JAVA_HOME
+    echo "You will need to install Java before we start"
+    exit
+  fi
 
   echo "Install required packages [y/n]?"
 
@@ -63,8 +74,10 @@ if [[ $option == 'y' ]]; then
   echo "Prepating test database"
   bundle exec rake db:test:prepare
 
-  echo "Installing Bower Components"
-  bundle exec rake bower:install
+  if [-f Bowerfile]; then
+    echo "Installing Bower Components..."
+    bundle exec rake bower:install
+  fi
 
   echo "==========================================="
   echo
