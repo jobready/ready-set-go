@@ -74,7 +74,7 @@ if [[ $option == 'y' ]]; then
   echo "Prepating test database"
   bundle exec rake db:test:prepare
 
-  if [-f Bowerfile]; then
+  if [[ -f Bowerfile ]]; then
     echo "Installing Bower Components..."
     bundle exec rake bower:install
   fi
