@@ -3,6 +3,7 @@ set -eo pipefail
 IFS=$'\n\t'
 
 project=$(basename $PWD)
+coffee=$(which brew)
 
 if ! [[ -f Gemfile ]]; then
   "Need to be in project root directory"
@@ -22,9 +23,8 @@ if [ -f .ruby-version ]; then
   version=$(<.ruby-version)
 fi
 
-echo "Ruby version is $version"
-
 if [[ $option == 'y' ]]; then
+  echo "Ruby version is $version"
   echo "Setting up $project"
   echo "-----------------------------------------------------------------------"
 
@@ -40,6 +40,12 @@ if [[ $option == 'y' ]]; then
 
   if [[ $packages == 'y' ]]; then
     if [[ "$OSTYPE" == "darwin"* ]]; then
+
+      if ! [[ "$coffee" == '' ]]; then
+        echo "homebrew not found"
+        exit
+      fi
+
       if [ -f requirements.txt ]; then
         packages=$(cat requirements.txt)
         echo "Installing $packages"
