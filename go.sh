@@ -4,7 +4,7 @@ IFS=$'\n\t'
 
 project=$(basename $PWD)
 
-if ! [[-f Gemfile]]; then
+if ! [[ -f Gemfile ]]; then
   "Need to be in project root directory"
   exit
 fi
