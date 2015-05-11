@@ -1,9 +1,11 @@
 #!/bin/bash
 set -eo pipefail
 IFS=$'\n\t'
-
 project=$(basename $PWD)
-coffee=$(which brew)
+
+function can_execute () {
+  hash "$1" 2>/dev/null
+}
 
 if ! [[ -f Gemfile ]]; then
   "Need to be in project root directory"
@@ -28,8 +30,7 @@ if [[ $option == 'y' ]]; then
   echo "Setting up $project"
   echo "-----------------------------------------------------------------------"
 
-  if ! [[ -n "$JAVA_HOME" ]]; then
-    echo $JAVA_HOME
+  if ! can_execute java; then
     echo "You will need to install Java before we start"
     exit
   fi
@@ -41,13 +42,13 @@ if [[ $option == 'y' ]]; then
   if [[ $packages == 'y' ]]; then
     if [[ "$OSTYPE" == "darwin"* ]]; then
 
-      if ! [[ "$coffee" == '' ]]; then
+      if ! can_execute brew; then
         echo "homebrew not found"
         exit
       fi
 
       if [ -f requirements.txt ]; then
-        packages=$(cat requirements.txt)
+        packages=$(cat requirements.txt | xargs)
         echo "Installing $packages"
         if brew install $packages; then
           rbenv install -s $version
@@ -68,6 +69,13 @@ if [[ $option == 'y' ]]; then
     exit
   fi
 
+  if [[ -f Bowerfile ]]; then
+    if ! can_execute bower; then
+      echo "You will need to install bower before we start: npm install bower -g"
+      exit
+    fi
+  fi
+
   echo "Running bundle install"
   bundle install
 
@@ -77,7 +85,7 @@ if [[ $option == 'y' ]]; then
   echo "Creating default tenant and system data"
   bundle exec rake db:setup
 
-  echo "Prepating test database"
+  echo "Preparing test database"
   bundle exec rake db:test:prepare
 
   if [[ -f Bowerfile ]]; then
