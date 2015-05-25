@@ -28,6 +28,7 @@ fi
 if [[ $option == 'y' ]]; then
   echo "Ruby version is $version"
   echo "Setting up $project"
+  echo "RAILS_ENV = $RAILS_ENV"
   echo "-----------------------------------------------------------------------"
 
   if ! can_execute java; then
