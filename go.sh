@@ -49,7 +49,7 @@ if [[ $option == 'y' ]]; then
       fi
 
       if [ -f requirements.txt ]; then
-        packages=$(cat requirements.txt | xargs)
+        packages=$(cat requirements.txt)
         echo "Installing $packages"
         if brew install $packages; then
           rbenv install -s $version
