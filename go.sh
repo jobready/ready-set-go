@@ -16,9 +16,8 @@ echo "Warning! This script will delete any existing databases configured for"
 echo "$project development and test. If you need any data in those"
 echo "databases, please exit this script now, and back it up before continuing."
 echo ""
-echo "Do you want to continue? [y/n]"
 
-read option
+read -p "Do you want to continue? [y/n]" option
 
 version=2.1.5
 if [ -f .ruby-version ]; then
@@ -36,9 +35,7 @@ if [[ $option == 'y' ]]; then
     exit
   fi
 
-  echo "Install required packages [y/n]?"
-
-  read packages
+  read -p "Install required packages [y/n]?" packages
 
   if [[ $packages == 'y' ]]; then
     if [[ "$OSTYPE" == "darwin"* ]]; then
