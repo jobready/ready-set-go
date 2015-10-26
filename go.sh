@@ -12,7 +12,7 @@ if ! [[ -f Gemfile ]]; then
   exit
 fi
 
-echo "Warning! This script will delete any existing databases configured for"
+echo "Warning! This script will delete any existing local databases configured for"
 echo "$project development and test. If you need any data in those"
 echo "databases, please exit this script now, and back it up before continuing."
 echo ""
@@ -34,6 +34,22 @@ if [[ $option == 'y' ]]; then
   if ! can_execute java; then
     echo "You will need to install Java before we start"
     exit
+  fi
+  
+  echo "Checking for a .env file"
+  if [[ ! -f .env ]]; then
+    echo ".env file does not exist"
+    echo "see env.sample for example file"
+    exit
+  else 
+     echo "Found .env file"
+  fi
+  
+  if [[ -f Bowerfile ]]; then
+    if ! can_execute bower; then
+      echo "You will need to install bower before we start: npm install bower -g"
+      exit
+    fi
   fi
 
   echo "Install required packages [y/n]?"
@@ -62,21 +78,7 @@ if [[ $option == 'y' ]]; then
       fi
     fi
   fi
-
-  echo "Checking for a .env file"
-  if [[ ! -f .env ]]; then
-    echo ".env file does not exist"
-    echo "see env.sample for example file"
-    exit
-  fi
-
-  if [[ -f Bowerfile ]]; then
-    if ! can_execute bower; then
-      echo "You will need to install bower before we start: npm install bower -g"
-      exit
-    fi
-  fi
-
+  
   echo "Running bundle install"
   bundle install
 
@@ -94,6 +96,10 @@ if [[ $option == 'y' ]]; then
     bundle exec rake bower:install
   fi
 
+  if [[ ! -d "log" ]]; then
+    mkdir log
+  fi
+
   echo "==========================================="
   echo
   echo
@@ -103,7 +109,7 @@ if [[ $option == 'y' ]]; then
   echo
   echo "Then you can visit your app at:"
   echo
-  echo "    http://jobready.127.0.0.1.xip.io:3001"
+  echo "    http://jobready.127.0.0.1.xip.io:9292"
   echo
   echo
   echo "==========================================="
