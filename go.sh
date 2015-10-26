@@ -70,11 +70,21 @@ if [[ $option == 'y' ]]; then
         if brew install $packages; then
           rbenv install -s $version
           rbenv local $version
-          gem install bundler
+          gem install bundler  
       fi
       else
         echo "Failed to install required packages"
         exit $?
+      fi
+      echo "Starting databases"
+      if ! pgrep "postgres" > /dev/null ; then
+        postgres -D /usr/local/var/postgres
+      fi
+      if ! ps -ef | grep elasticsearch > /dev/null ; then
+        elasticsearch --config=/usr/local/opt/elasticsearch/config/elasticsearch.yml
+      fi
+      if ! pgrep "redis" > /dev/null ; then
+        redis-server /usr/local/etc/redis.conf
       fi
     fi
   fi
